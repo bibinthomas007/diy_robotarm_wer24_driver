@@ -1,0 +1,39 @@
+[0.109s] Invoking command in '/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/build/diy_robotarm_wer24_driver': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver -DCMAKE_INSTALL_PREFIX=/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/install/diy_robotarm_wer24_driver
+[0.331s] -- The C compiler identification is GNU 11.4.0
+[0.492s] -- The CXX compiler identification is GNU 11.4.0
+[0.508s] -- Detecting C compiler ABI info
+[0.631s] -- Detecting C compiler ABI info - done
+[0.644s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.645s] -- Detecting C compile features
+[0.645s] -- Detecting C compile features - done
+[0.651s] -- Detecting CXX compiler ABI info
+[0.787s] -- Detecting CXX compiler ABI info - done
+[0.798s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.798s] -- Detecting CXX compile features
+[0.799s] -- Detecting CXX compile features - done
+[0.806s] -- Found ament_cmake: 1.3.6 (/opt/ros/humble/share/ament_cmake/cmake)
+[1.057s] -- Found Python3: /usr/bin/python3.10 (found version "3.10.12") found components: Interpreter 
+[1.216s] -- Found diy_robotarm_wer24_description: 0.0.0 (/home/hephaestus/dependencies/diy_robotarm_wer24_description_ws/install/diy_robotarm_wer24_description/share/diy_robotarm_wer24_description/cmake)
+[1.217s] -- Found diy_soft_gripper_description: 0.0.0 (/home/hephaestus/dependencies/diy_soft_gripper_description_ws/install/diy_soft_gripper_description/share/diy_soft_gripper_description/cmake)
+[1.218s] -- Found diy_robot_full_cell_description: 0.0.0 (/home/hephaestus/dependencies/diy_robot_full_cell_description_ws/install/diy_robot_full_cell_description/share/diy_robot_full_cell_description/cmake)
+[1.222s] -- Found xacro: 2.0.8 (/opt/ros/humble/share/xacro/cmake)
+[1.244s] [31mCMake Error at CMakeLists.txt:15 (find_package):
+[1.244s]   By not providing "Findbackward_ros.cmake" in CMAKE_MODULE_PATH this project
+[1.244s]   has asked CMake to find a package configuration file provided by
+[1.244s]   "backward_ros", but CMake did not find one.
+[1.244s] 
+[1.245s]   Could not find a package configuration file provided by "backward_ros" with
+[1.245s]   any of the following names:
+[1.245s] 
+[1.245s]     backward_rosConfig.cmake
+[1.245s]     backward_ros-config.cmake
+[1.246s] 
+[1.246s]   Add the installation prefix of "backward_ros" to CMAKE_PREFIX_PATH or set
+[1.246s]   "backward_ros_DIR" to a directory containing one of the above files.  If
+[1.246s]   "backward_ros" provides a separate development package or SDK, be sure it
+[1.247s]   has been installed.
+[1.247s] 
+[1.247s] [0m
+[1.247s] -- Configuring incomplete, errors occurred!
+[1.248s] See also "/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/build/diy_robotarm_wer24_driver/CMakeFiles/CMakeOutput.log".
+[1.249s] Invoked command in '/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/build/diy_robotarm_wer24_driver' returned '1': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver -DCMAKE_INSTALL_PREFIX=/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/install/diy_robotarm_wer24_driver

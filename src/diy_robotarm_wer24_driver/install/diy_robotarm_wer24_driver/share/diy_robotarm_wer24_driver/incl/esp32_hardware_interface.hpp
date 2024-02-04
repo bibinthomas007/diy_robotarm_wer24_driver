@@ -19,19 +19,19 @@
 #include <sstream>
 #include <iomanip>
 
-//#include "visibility_control.h" not necessary in LINUX
+
+#include "visibility_control.h"
 #include "RobotConnection.hpp"
 using namespace std::chrono_literals;
 
-RobotConnection * pRobot; //declares a pointer that can hold the memory address of an object of the RobotConnection class
+RobotConnection * pRobot;
 
-//define Nodes that publish on specific topics
 class RosPublishers : public rclcpp::Node {
 public:
   RosPublishers(RobotConnection * pRobot) : Node("text_publisher"), count_(0) {
     statusPublisher_ = this->create_publisher<std_msgs::msg::String>("custom_hardware/status", 10);
-    // digitalInputPub_ = this->create_publisher<std_msgs::msg::UInt8MultiArray>("custom_hardware/digital_inputs/read", 10);
-    // digitalOutputPub_ = this->create_publisher<std_msgs::msg::UInt8MultiArray>("custom_hardware/digital_outputs/read", 10);
+    digitalInputPub_ = this->create_publisher<std_msgs::msg::UInt8MultiArray>("custom_hardware/digital_inputs/read", 10);
+    digitalOutputPub_ = this->create_publisher<std_msgs::msg::UInt8MultiArray>("custom_hardware/digital_outputs/read", 10);
     textOutputPub_ = this->create_publisher<std_msgs::msg::String>("custom_hardware/command/output", 10);
 
     pRobot_ = pRobot;
@@ -40,8 +40,8 @@ public:
   
 private:
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr statusPublisher_;
-  //rclcpp::Publisher<std_msgs::msg::UInt8MultiArray>::SharedPtr digitalInputPub_;
-  //rclcpp::Publisher<std_msgs::msg::UInt8MultiArray>::SharedPtr digitalOutputPub_;
+  rclcpp::Publisher<std_msgs::msg::UInt8MultiArray>::SharedPtr digitalInputPub_;
+  rclcpp::Publisher<std_msgs::msg::UInt8MultiArray>::SharedPtr digitalOutputPub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr textOutputPub_;
 
   void timer_callback() {
@@ -74,10 +74,7 @@ private:
   
   size_t count_;
 };
-
-
-
-// define Nodes that subscribe to Topics
+// IOs kann bestimmt weg
 class RosSubscribers : public rclcpp::Node {
 public:
   RosSubscribers(RobotConnection * pRobot) : Node("text_subscriber") {
@@ -88,7 +85,7 @@ public:
     // );
 
     customCommandSub_ = this->create_subscription<std_msgs::msg::String>(
-      "esp32_hardware/command/input",
+      "custom_hardware/command/input",
       10,
       std::bind(&RosSubscribers::custom_command_callback, this, std::placeholders::_1)
     );
@@ -96,62 +93,68 @@ public:
   }
 
 private:
-  // void custom_command_callback(const std_msgs::msg::String::SharedPtr msg) const {
-  //   pRobot_->messageHandler(msg->data);
-  // };
+  void custom_command_callback(const std_msgs::msg::String::SharedPtr msg) const {
+    pRobot_->messageHandler(msg->data);
+  };
 
-  // void digital_output_write_callback(const std_msgs::msg::UInt8MultiArray::SharedPtr msg) const {
-  //   pRobot_->setDigitalOutputs(msg->data);
-  // }
+  void digital_output_write_callback(const std_msgs::msg::UInt8MultiArray::SharedPtr msg) const {
+    pRobot_->setDigitalOutputs(msg->data);
+  }
 
   RobotConnection * pRobot_;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr customCommandSub_;
-  //rclcpp::Subscription<std_msgs::msg::UInt8MultiArray>::SharedPtr digitalOutputSub_;
+  rclcpp::Subscription<std_msgs::msg::UInt8MultiArray>::SharedPtr digitalOutputSub_;
 };
 
 
-
-//define pointer functions for Threads (one for Subscribers and one for Publishers)
 void * subscriberThread(void * robot) {
   rclcpp::spin(std::make_shared<RosSubscribers>((RobotConnection *) robot));
 };
+
 
 void * publisherThread(void * robot) {
   rclcpp::spin(std::make_shared<RosPublishers>((RobotConnection *) robot));
 };
 
 
-
-// define the hardware inteface (rype system: read and write capabilities) which the controller can access
-namespace esp32_hardware_interface{
-  class ESP32Hardware:  public hardware_interface::SystemInterface {
+// System interface, alles andere nicht muss (Namen gut benennen)
+namespace custom_hardware {
+  class CustomHardware :  public hardware_interface::SystemInterface {
   public:
-    RCLCPP_SHARED_PTR_DEFINITIONS(CustomHardware) //Shared pointers are a type of smart pointer in C++ that manages the memory of an object, ensuring proper deallocation
+    RCLCPP_SHARED_PTR_DEFINITIONS(CustomHardware)
 
-    hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override; //declares a member function named on_init. It is declared as an override of a function in the base class
+    CUSTOM_HARDWARE_PUBLIC
+    hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override;
 
+    CUSTOM_HARDWARE_PUBLIC
     hardware_interface::CallbackReturn on_configure(const   rclcpp_lifecycle::State   & previous_state) override;
 
+    CUSTOM_HARDWARE_PUBLIC
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
+    CUSTOM_HARDWARE_PUBLIC
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
+    CUSTOM_HARDWARE_PUBLIC
     hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state) override;
 
+    CUSTOM_HARDWARE_PUBLIC
     hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
 
+    CUSTOM_HARDWARE_PUBLIC
     hardware_interface::return_type read(const  rclcpp::Time & time, const rclcpp::Duration & period) override;
 
+    CUSTOM_HARDWARE_PUBLIC
     hardware_interface::return_type write(const  rclcpp::Time & time, const rclcpp::Duration & period) override;
     
 
-    // Initialization of the above defined pointer functions
+    // Initialization function
     void initSubscribersAndPublishers() {
       pthread_create(&textThread_, NULL, subscriberThread, (void *) &robotConnection);
       pthread_create(&textPubThread_, NULL, publisherThread, (void *) &robotConnection);
     }; 
 
-
+    
   private:
     int counter_;
 

@@ -12,6 +12,7 @@ find_package(diy_soft_gripper_description REQUIRED)
 find_package(diy_robot_full_cell_description REQUIRED)
 find_package(xacro REQUIRED)
 
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
@@ -29,7 +30,7 @@ endif()
 install(DIRECTORY
   launch
   config
-  incl
+  include
   src
   DESTINATION share/${PROJECT_NAME}/
 )
