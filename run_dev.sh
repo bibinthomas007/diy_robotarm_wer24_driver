@@ -10,8 +10,8 @@ gid=$(eval "id -g")
 #pass some arguments and settings to the dev.Dockerfile while building the image (dev.Dockerfile)
 #name of the image builded here: diy-full-description/ros-render:"$ROS_DISTRO":"ROS-Distribution eg humble"
 #dont use cached data to clone up-to date repos all the time
+  #--no-cache \
 docker build \
-  --no-cache \
   --build-arg ROS_DISTRO="$ROS_DISTRO" \
   --build-arg UID="$uid" \
   --build-arg GID="$gid" \

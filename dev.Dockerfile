@@ -17,6 +17,14 @@ RUN cd /home/$USER/dependencies/diy_robot_full_cell_description_ws && \
 
 # Add built diy-full cell description package to entrypoint by calling install/setup.bash
 USER root
+RUN apt-get update && apt-get install -y ros-humble-controller-interface 
+RUN apt-get update && apt-get install -y ros-humble-controller-manager 
+RUN apt-get update && apt-get install -y ros-humble-hardware-interface 
+RUN apt-get update && apt-get install -y ros-humble-pluginlib 
+RUN apt-get update && apt-get install -y ros-humble-rclcpp
+RUN apt-get update && apt-get install -y ros-humble-rclcpp-lifecycle
+
+
 RUN sed -i 's|exec "\$@"|source "/home/'"${USER}"'/dependencies/diy_robot_full_cell_description_ws/install/setup.bash"\n&|' /ros_entrypoint.sh
 USER $USER
 
