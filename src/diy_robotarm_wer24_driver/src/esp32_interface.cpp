@@ -26,7 +26,7 @@ namespace esp32_robot_driver {
 //###################################################################################################################
 //on_init is called when initializing the controller (init variables, declare node parameters used by the controller)
 //###################################################################################################################
-  hardware_interface::CallbackReturn CustomHardware::on_init(const hardware_interface::HardwareInfo & info) {
+  hardware_interface::CallbackReturn ESP32Hardware::on_init(const hardware_interface::HardwareInfo & info) {
 
     // Return an error if the modified controller can't be initialized:
     if (hardware_interface::SystemInterface::on_init(info) !=  hardware_interface::CallbackReturn::SUCCESS) {
@@ -88,7 +88,7 @@ namespace esp32_robot_driver {
 //###########################################################################################################################
 // on_configure is called after on_init, parameters from ros2_control_urdf.xcacro are read here and passed to the controller
 //###########################################################################################################################
-  hardware_interface::CallbackReturn CustomHardware::on_configure(const rclcpp_lifecycle::State & previous_state) {
+  hardware_interface::CallbackReturn ESP32Hardware::on_configure(const rclcpp_lifecycle::State & previous_state) {
 
     //Get the parameters for the robot:
     std::string tf_prefix = info_.hardware_parameters["tf_prefix"];
@@ -119,7 +119,7 @@ namespace esp32_robot_driver {
 // export_state_interfaces is called to match the defined interfaces from the urdf to set them up and 
 // registered for communication with the underlying hardware --> Configure interfaces
 //############################################################################################################################
-  std::vector<hardware_interface::StateInterface> CustomHardware::export_state_interfaces() {
+  std::vector<hardware_interface::StateInterface> ESP32Hardware::export_state_interfaces() {
 
     std::vector<hardware_interface::StateInterface> state_interfaces;
 
@@ -139,7 +139,7 @@ namespace esp32_robot_driver {
 // export_command_interfaces is called to match the defined interfaces from the urdf to set them up and 
 // registered for communication with the underlying hardwareterfaces --> Configure interfaces
 //##################################################################################################################################
-  std::vector<hardware_interface::CommandInterface> CustomHardware::export_command_interfaces() {
+  std::vector<hardware_interface::CommandInterface> ESP32Hardware::export_command_interfaces() {
 
     std::vector<hardware_interface::CommandInterface> command_interfaces;
 
@@ -156,7 +156,7 @@ namespace esp32_robot_driver {
 //###############################################################################################################################
 // [realtime-loop] on_activate is called when the control loop gets activated --> interfaces get established/ datatransfer starts
 //###############################################################################################################################
-  hardware_interface::CallbackReturn CustomHardware::on_activate(const rclcpp_lifecycle::State & previous_state) {
+  hardware_interface::CallbackReturn ESP32Hardware::on_activate(const rclcpp_lifecycle::State & previous_state) {
     RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "on_activate has been called, motors are on power!");
     robotConnection.toggleActuatorPower(true);
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -165,7 +165,7 @@ namespace esp32_robot_driver {
 //################################################################################################################################
 // [realtime-loop] on_deactivate is called when the control loop gets deactivated --> interfaces get closed and datatransfer stops
 //################################################################################################################################
-  hardware_interface::CallbackReturn CustomHardware::on_deactivate(const rclcpp_lifecycle::State & previous_state) {
+  hardware_interface::CallbackReturn ESP32Hardware::on_deactivate(const rclcpp_lifecycle::State & previous_state) {
     RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "on_deactivate has been called, motors are free!");
     robotConnection.toggleActuatorPower(false);
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -174,7 +174,7 @@ namespace esp32_robot_driver {
 //###########################################################################################################################
 // [realtime-loop] read is called to read previous setpoints from the hardware --> read control-value (Istwert)
 //###########################################################################################################################
-  hardware_interface::return_type CustomHardware::read(const  rclcpp::Time & time, const rclcpp::Duration & period) {
+  hardware_interface::return_type ESP32Hardware::read(const  rclcpp::Time & time, const rclcpp::Duration & period) {
     robotConnection.readData(); 
     return hardware_interface::return_type::OK;
   }
@@ -182,7 +182,7 @@ namespace esp32_robot_driver {
 //###########################################################################################################################
 // [realtime-loop] write is called to write new commands to the hardware --> write setpoints to reach a control-error = 0
 //###########################################################################################################################
-  hardware_interface::return_type CustomHardware::write(const  rclcpp::Time & time, const rclcpp::Duration & period) {
+  hardware_interface::return_type ESP32Hardware::write(const  rclcpp::Time & time, const rclcpp::Duration & period) {
     // robotConnection.fakeUpdate();    // Fake the output values
     std::stringstream message;
 
@@ -210,7 +210,5 @@ namespace esp32_robot_driver {
 
 } //close namespace
 
-//export class to plugin (makes driver accessable for ros2) <controller_name_namespace>::<ControllerName>
+//export class to plugin (makes driver accessable for ros2) <controller_name_namespace>::<ControllerName>, see esp32_interface_plugin.xml
 PLUGINLIB_EXPORT_CLASS(esp32_robot_driver::ESP32Hardware, hardware_interface::SystemInterface)
-
-// weitermachen ab 5. https://control.ros.org/humble/doc/ros2_controllers/doc/writing_new_controller.html
