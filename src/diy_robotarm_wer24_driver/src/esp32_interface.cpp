@@ -175,7 +175,7 @@ namespace esp32_robot_driver {
 // [realtime-loop] read is called to read previous setpoints from the hardware --> read control-value (Istwert)
 //###########################################################################################################################
   hardware_interface::return_type ESP32Hardware::read(const  rclcpp::Time & time, const rclcpp::Duration & period) {
-    robotConnection.readData(); 
+    robotConnection.readData();  //readed values (robotConnection.hw_states_axisPositions) directly linked to the state interface in export_state_interfaces
     return hardware_interface::return_type::OK;
   }
 
@@ -183,19 +183,12 @@ namespace esp32_robot_driver {
 // [realtime-loop] write is called to write new commands to the hardware --> write setpoints to reach a control-error = 0
 //###########################################################################################################################
   hardware_interface::return_type ESP32Hardware::write(const  rclcpp::Time & time, const rclcpp::Duration & period) {
-    // robotConnection.fakeUpdate();    // Fake the output values
     std::stringstream message;
 
     // Add a log string if the axis setpoints receive new values --> outcommentet to save runtime in realtime loop!
     for (size_t i = 0; i < robotConnection.hw_cmd_axisSetpoints.size(); i++) {
       if (robotConnection.hw_cmd_axisSetpoints[i] != robotConnection.hw_cmd_axisSetpoints_prev[i]) message << "New Setpint: Axis[" << i << "] := " << robotConnection.hw_cmd_axisSetpoints[i] << std::endl;
       robotConnection.hw_cmd_axisSetpoints_prev[i] = robotConnection.hw_cmd_axisSetpoints[i];
-    }
-
-    // Add a log string if the digital outputs receive new values
-    for (size_t i = 0; i < robotConnection.hw_cmd_digitalOutputs.size(); i++) {
-      if (robotConnection.hw_cmd_digitalOutputs[i] != robotConnection.hw_cmd_digitalOutputs_prev[i]) message << "New Setpoint: Output[" << i << "] := " << robotConnection.hw_cmd_digitalOutputs[i] << std::endl;
-      robotConnection.hw_cmd_digitalOutputs_prev[i] = robotConnection.hw_cmd_digitalOutputs[i];
     }
 
     // Send the new data to the robot by using RobotConnection class
