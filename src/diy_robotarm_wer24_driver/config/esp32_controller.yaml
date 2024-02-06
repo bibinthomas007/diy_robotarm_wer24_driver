@@ -33,7 +33,7 @@ forward_position_controller:
   ros__parameters:
     joints:
       - ${tf_prefix}shoulder
-      - ${tf_prefix}upper_arm"
+      - ${tf_prefix}upper_arm
       - ${tf_prefix}forearm
       - ${tf_prefix}wrist_1
       - ${tf_prefix}wrist_2
@@ -41,12 +41,11 @@ forward_position_controller:
     interface_name: position
 
 
-
 joint_trajectory_position_controller:
   ros__parameters:
     joints:
       - ${tf_prefix}shoulder
-      - ${tf_prefix}upper_arm"
+      - ${tf_prefix}upper_arm
       - ${tf_prefix}forearm
       - ${tf_prefix}wrist_1
       - ${tf_prefix}wrist_2
