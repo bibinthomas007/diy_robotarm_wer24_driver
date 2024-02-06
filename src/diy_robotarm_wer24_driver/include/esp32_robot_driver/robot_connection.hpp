@@ -52,9 +52,6 @@ public:
   std::vector<double> hw_cmd_axisSetpoints;     // Axis Setpoints (command)
   std::vector<double> hw_states_axisPositions;  // Axis Position (state)
 
-  // Arrays to contain the previous setpoints used for logging changes:
-  std::vector<double> hw_cmd_axisSetpoints_prev;  // Prev. Axis Setpoints
-
 
   //#####################################################################################
   // called in driver: "ESP32Hardware::on_activate" and "ESP32Hardware::on_deactivate"
