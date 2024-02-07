@@ -14,14 +14,18 @@
 #include "esp32_robot_driver/esp32_interface.hpp"
 #include "esp32_robot_driver/robot_connection.hpp"
 
-//Destruct Instances if there are already some to prevent some weired behavior (calls class from esp32_inteface.hpp)
-ESP32Hardware::~ESP32Hardware()
 
 //generate an instance from RobotConnection class in robot_connection.hpp which handles communication over TCP-IP to the ESP
 RobotConnection robotConnection;
 
 //redefine/ override the base controller methods to our custom purposes (following methods constructed in esp32_interface.hpp)
 namespace esp32_robot_driver {
+
+  //Destruct Instances if controller manager is shut down via ctrl + C, because on_deactivate isnt called then (calls class from esp32_inteface.hpp)
+  virtual ~ESP32Hardware() {
+    //virtual destructor enables proper cleanup in polymorphic class hierarchies by ensuring the correct destructor is invoked for objects of derived classes when deleted through a base class pointer
+    on_deactivate(rclcpp_lifecycle::State());
+  }
 
 //###################################################################################################################
 //on_init is called when initializing the controller (init variables, declare node parameters used by the controller)
@@ -37,7 +41,7 @@ namespace esp32_robot_driver {
     robotConnection.hw_states_axisPositions.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
     // READ/WRITE-Values (Axis Setpoints)
     robotConnection.hw_cmd_axisSetpoints.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN()); 
-    robotConnection.hw_cmd_axisSetpoints_prev.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+    //#######################################################################robotConnection.hw_cmd_axisSetpoints_prev.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
     
 
     for (const hardware_interface::ComponentInfo & joint : info_.joints) { //loops over all defined joints (refering to urdf or info_.joints)
@@ -103,6 +107,7 @@ namespace esp32_robot_driver {
       return hardware_interface::CallbackReturn::ERROR;
     } 
 
+    //####################################################################################################################################
     // // Set initial position values (defined in diy_robotarm_wer24_description package): //wird doch eigentlich in on_init schon gemacht
     // for (auto i = 0; i < robotConnection.hw_states_axisPositions.size(); i++) {
     //   robotConnection.hw_states_axisPositions[i] = 0;
@@ -183,25 +188,27 @@ namespace esp32_robot_driver {
 // [realtime-loop] write is called to write new commands to the hardware --> write setpoints to reach a control-error = 0
 //###########################################################################################################################
   hardware_interface::return_type ESP32Hardware::write(const  rclcpp::Time & time, const rclcpp::Duration & period) {
-    std::stringstream message;
-
-    // Add a log string if the axis setpoints receive new values --> outcommentet to save runtime in realtime loop!
-    for (size_t i = 0; i < robotConnection.hw_cmd_axisSetpoints.size(); i++) {
-      if (robotConnection.hw_cmd_axisSetpoints[i] != robotConnection.hw_cmd_axisSetpoints_prev[i]) message << "New Setpint: Axis[" << i << "] := " << robotConnection.hw_cmd_axisSetpoints[i] << std::endl;
-      robotConnection.hw_cmd_axisSetpoints_prev[i] = robotConnection.hw_cmd_axisSetpoints[i];
-    }
-
     // Send the new data to the robot by using RobotConnection class
     robotConnection.sendData();
 
+
+    //####################################################################################################################################
+    // Add a log string if the axis setpoints receive new values --> outcommentet to save runtime in realtime loop!
+    //for (size_t i = 0; i < robotConnection.hw_cmd_axisSetpoints.size(); i++) {
+    //  if (robotConnection.hw_cmd_axisSetpoints[i] != robotConnection.hw_cmd_axisSetpoints_prev[i]) message << "New Setpint: Axis[" << i << "] := " << robotConnection.hw_cmd_axisSetpoints[i] << std::endl;
+    //  robotConnection.hw_cmd_axisSetpoints_prev[i] = robotConnection.hw_cmd_axisSetpoints[i];
+   // }
+
+    //std::stringstream message;
+
     // Print the log messages, if required
-    std::string output = message.str().c_str();
-    if (output != "") RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), output.c_str());
+    //std::string output = message.str().c_str();
+    //if (output != "") RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), output.c_str());
       
     return hardware_interface::return_type::OK;
-  }
+  };
 
-} //close namespace
+}; //close namespace
 
 //export class to plugin (makes driver accessable for ros2) <controller_name_namespace>::<ControllerName>, see esp32_interface_plugin.xml
 PLUGINLIB_EXPORT_CLASS(esp32_robot_driver::ESP32Hardware, hardware_interface::SystemInterface)
