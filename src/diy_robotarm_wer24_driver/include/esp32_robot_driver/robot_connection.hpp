@@ -20,7 +20,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "data_format.hpp"
-#include "helpers.hpp"  //defines MyUtils namespace
 
 class RobotConnection;
 
@@ -40,9 +39,7 @@ private:
   uint8_t messageNumber_ = 0;
   int socketConnection_;
 
-  uint64_t sendTime = 0;
   int bytesSent = 0;
-  uint64_t responseTime_;
 
   bool newMessageRevceived_ = false;
   std::string newMessage_ = "";
@@ -67,14 +64,8 @@ public:
   // called in driver: "ESP32Hardware::on_configure"
   //##################################################################################### 
   // Connect to the robot hardware on the given IP Address. 
-  // If the robot connects directly to the PC, the ssid of the hotspot should be passed to check if it's up and running.
 
   bool initialize(std::string ipAddress, std::string ssid, std::string & errorMessage) {
-    // If required, check if the hotspot connection is active:
-    if (ssid != "" && MyUtils::hotspotIsActive(ssid, errorMessage) == false) return false;
-
-    // Check if the robot can be pinged:
-    if (MyUtils::checkConnection(ipAddress, errorMessage) == false) return false;
 
     // Create a socket handle:
     socketConnection_ = socket(AF_INET, SOCK_STREAM, 0);
@@ -107,8 +98,6 @@ public:
     // Read data from the socket
     int bytesReceived = recv(socketConnection_, &response, sizeof(response), 0);
     
-    responseTime_ = MyUtils::micros() - sendTime;   // Calculate the communciation delay --> for debugging purposes, not used in final implementation
-
     // Update the axis position states from the received values:
     for (auto i = 0; i < hw_states_axisPositions.size(); i++) {
       hw_states_axisPositions[i] = (double) response.jointPositions[i] / 57295.7795131; //conversion millidegrees to rad (esp works in millidegrees, ros in rad)
@@ -126,8 +115,7 @@ public:
       request.jointSetpoints[i] = (int32_t) (hw_cmd_axisSetpoints[i] * 57295.7795131);    //57295.7795131 = 1000 * 180/pi
     } 
     
-    // Start the communication delay measurement and send the data to the robot (increasing the message number for checking purposes):
-    sendTime = MyUtils::micros();
+    // Start send the data to the robot (increasing the message number for checking purposes):
     request.messageNumber++;
     bytesSent = send(socketConnection_, &request, sizeof(request), 0);
 

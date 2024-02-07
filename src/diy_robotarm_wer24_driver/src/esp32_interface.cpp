@@ -83,7 +83,7 @@ namespace esp32_robot_driver {
       }
 
       //further feedback in terminal in case of fatal_error
-      RCLCPP_FATAL(rclcpp::get_logger("ESP32_Driver"), "Joint is called  \"%s\"", joint.name.c_str());
+      RCLCPP_FATAL(rclcpp::get_logger("ESP32_Driver"), "During driver initialization Joint is called  \"%s\"", joint.name.c_str());
     }
 
     return hardware_interface::CallbackReturn::SUCCESS; 
@@ -98,8 +98,12 @@ namespace esp32_robot_driver {
     std::string tf_prefix = info_.hardware_parameters["tf_prefix"];
     std::string ipAddress = info_.hardware_parameters["robot_ip"];
     std::string ssid = info_.hardware_parameters["robot_ssid"];
+    
+    //feedback in terminal try 
+    RCLCPP_FATAL(rclcpp::get_logger("ESP32_Driver"), "Searching for Robot in Network with SSID: : ", ssid.c_str());
+    RCLCPP_FATAL(rclcpp::get_logger("ESP32_Driver"), "Try to connect to Robot with IP-Adress: ", ssid.c_str());
 
-    std::string errorMessage = "During Robot Connection: ";
+    std::string errorMessage = "ERROR during Robot Connection: ";
 
     //Try to connect to the robot with the given configuration by calling the desired method in RobotConnection Class 
     if (robotConnection.initialize(ipAddress, ssid, errorMessage) == false) {
@@ -114,7 +118,7 @@ namespace esp32_robot_driver {
     //   robotConnection.hw_cmd_axisSetpoints[i] = 0;
     // }
 
-    RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "Successfully configured the ESP32_Driver!");
+    RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "Successfully connected to the Robot via TCP-IP!");
 
     return hardware_interface::CallbackReturn::SUCCESS;
   }
