@@ -22,10 +22,10 @@ RobotConnection robotConnection;
 namespace esp32_robot_driver {
 
   // //Destruct Instances if controller manager is shut down via ctrl + C, because on_deactivate isnt called then (calls class from esp32_inteface.hpp)
-  // virtual ~ESP32Hardware() {
-  //   //virtual destructor enables proper cleanup in polymorphic class hierarchies by ensuring the correct destructor is invoked for objects of derived classes when deleted through a base class pointer
-  //   on_deactivate(rclcpp_lifecycle::State());
-  // }
+   ESP32Hardware::~ESP32Hardware() {
+    //virtual destructor enables proper cleanup in polymorphic class hierarchies by ensuring the correct destructor is invoked for objects of derived classes when deleted through a base class pointer
+    on_deactivate(rclcpp_lifecycle::State());
+  }
 
 //###################################################################################################################
 //on_init is called when initializing the controller (init variables, declare node parameters used by the controller)

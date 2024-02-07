@@ -31,6 +31,7 @@ namespace esp32_robot_driver{
 
   class ESP32Hardware:  public hardware_interface::SystemInterface {
   public:
+    virtual ~ESP32Hardware();
 
     hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override; //declares a member function named on_init. It is declared as an override of a function in the base class
 

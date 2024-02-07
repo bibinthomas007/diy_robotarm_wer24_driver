@@ -4,7 +4,7 @@
 controller_manager:
   ros__parameters:
     update_rate: 50  # Hz update rate for the control loop
-    tf_prefix: "${tf_prefix}"
+    tf_prefix: "arm_"
 
 #init the used controllers with specific hardware-interface type
     #every controller subscribes on a 2 ROS-Topics e.g. [trajectory_msgs::msg::JointTrajectory and control_msgs::msg::JointTrajectoryControllerState]
@@ -27,29 +27,30 @@ controller_manager:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
-#define parameters from the controllers (interface_name and joints are defined in diy_robotwam_wer24_description/urdf/robot_arm_control.urdf.xacro)
+#define parameters from the controllers (interface_name and joints are defined in diy_robotarm_wer24_description/urdf/robot_arm_control.urdf.xacro)
 #this connects the controllers to Interfaces by calling the resource manager internally
 forward_position_controller:
   ros__parameters:
     joints:
-      - ${tf_prefix}shoulder
-      - ${tf_prefix}upper_arm
-      - ${tf_prefix}forearm
-      - ${tf_prefix}wrist_1
-      - ${tf_prefix}wrist_2
-      - ${tf_prefix}wrist_3
+      - arm_shoulder
+      - arm_upper_arm
+      - arm_forearm
+      - arm_wrist_1
+      - arm_wrist_2
+      - arm_wrist_3
     interface_name: position
+
 
 
 joint_trajectory_position_controller:
   ros__parameters:
     joints:
-      - ${tf_prefix}shoulder
-      - ${tf_prefix}upper_arm
-      - ${tf_prefix}forearm
-      - ${tf_prefix}wrist_1
-      - ${tf_prefix}wrist_2
-      - ${tf_prefix}wrist_3
+      - arm_shoulder
+      - arm_upper_arm
+      - arm_forearm
+      - arm_wrist_1
+      - arm_wrist_2
+      - arm_wrist_3
     #trajectory controller needs at least position feedback from the hardware (so we need to define state and command interfaces at this point)
     command_interfaces:
       - position
