@@ -96,9 +96,11 @@ ament_export_libraries(
   esp32_interface_plugin
 )
 
-
-install(DIRECTORY include/
-  DESTINATION include
+install(DIRECTORY
+  launch
+  config
+  test
+  DESTINATION share/${PROJECT_NAME}/
 )
 
 ament_export_dependencies(
