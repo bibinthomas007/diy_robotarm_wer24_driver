@@ -5,19 +5,25 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(backward_ros REQUIRED)
+find_package(controller_manager REQUIRED)
+find_package(controller_manager_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(hardware_interface REQUIRED)
+find_package(controller_interface REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+
 find_package(diy_robotarm_wer24_description REQUIRED)
 find_package(diy_soft_gripper_description REQUIRED)
 find_package(diy_robot_full_cell_description REQUIRED)
 find_package(xacro REQUIRED)
-
-find_package(controller_interface REQUIRED)
-find_package(controller_manager REQUIRED)
-find_package(hardware_interface REQUIRED)
-find_package(pluginlib REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rclcpp_lifecycle REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -31,25 +37,81 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-#add self written folders to package build
 include_directories(include)
 
-add_library(esp32_driver_plugin
+set(THIS_PACKAGE_INCLUDE_DEPENDS
+  controller_manager
+  controller_manager_msgs
+  geometry_msgs
+  hardware_interface
+  pluginlib
+  rclcpp
+  rclcpp_lifecycle
+  std_msgs
+  std_srvs
+  tf2_geometry_msgs
+  diy_robotarm_wer24_description
+  diy_soft_gripper_description
+  diy_robot_full_cell_description
+  xacro
+)
+
+# compile hardware interface
+add_library(esp_interface_plugin
   SHARED
   src/esp32_interface.cpp
 )
+target_link_libraries(
+  esp_interface_plugin
+)
+target_include_directories(
+  esp_interface_plugin
+  PRIVATE
+  include
+)
+ament_target_dependencies(
+  esp_interface_plugin
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
+)
+#export pligin to libary
+pluginlib_export_plugin_description_file(hardware_interface esp32_interface_plugin.xml)
 
-pluginlib_export_plugin_description_file(controller_interface esp32_interface_plugin.xml)
 
+# INSTALL
+install(
+  TARGETS esp_interface_plugin
+  DESTINATION lib
+)
 install(
   DIRECTORY include/
   DESTINATION include
 )
 
-install(DIRECTORY
-  launch
-  config
-  DESTINATION share/${PROJECT_NAME}/
+## EXPORTS
+ament_export_include_directories(
+  include
 )
+ament_export_libraries(
+  esp_interface_plugin
+)
+
+
+install(DIRECTORY include/
+  DESTINATION include
+)
+
+ament_export_dependencies(
+  hardware_interface
+  pluginlib
+  rclcpp
+  rclcpp_lifecycle
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
+)
+
+# Install Python execs
+#ament_python_install_package(${PROJECT_NAME})
+
+
 
 ament_package()
