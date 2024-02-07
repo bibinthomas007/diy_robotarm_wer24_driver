@@ -13,6 +13,14 @@
   <depend>diy_soft_gripper_description</depend>
   <depend>diy_robot_full_cell_description</depend>
   <depend>xacro</depend>
+  <depend>controller_interface</depend>
+  <depend>controller_manager</depend>
+  <depend>hardware_interface</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_lifecycle</depend>
+
+
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

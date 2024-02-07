@@ -2,7 +2,7 @@
 <!--name defines the controller’s type when the controller manager searches for it-->
 <!--name and type must match the definition at bottom of src/esp32_interface.cpp (look for the namespaces)-->
 
-<library path="esp32_interface_plugin">
+<library path="esp32_robot_driver_plugin">
   <class name="esp32_robot_driver/ESP32Hardware"            
          type="esp32_robot_driver::ESP32Hardware"
          base_class_type="hardware_interface::SystemInterface">

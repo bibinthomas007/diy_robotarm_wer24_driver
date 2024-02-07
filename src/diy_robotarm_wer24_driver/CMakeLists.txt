@@ -34,6 +34,13 @@ endif()
 #add self written folders to package build
 include_directories(include)
 
+add_library(esp32_driver_plugin
+  SHARED
+  src/esp32_interface.cpp
+)
+
+pluginlib_export_plugin_description_file(controller_interface esp32_interface_plugin.xml)
+
 install(
   DIRECTORY include/
   DESTINATION include
@@ -44,7 +51,5 @@ install(DIRECTORY
   config
   DESTINATION share/${PROJECT_NAME}/
 )
-
-pluginlib_export_plugin_description_file(controller_interface esp32_interface_plugin.xml)
 
 ament_package()

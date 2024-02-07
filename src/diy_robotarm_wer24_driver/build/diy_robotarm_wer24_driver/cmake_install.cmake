@@ -43,12 +43,18 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/include/")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diy_robotarm_wer24_driver/" TYPE DIRECTORY FILES
     "/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/launch"
     "/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/config"
-    "/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/incl"
-    "/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/src"
     )
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/diy_robotarm_wer24_driver" TYPE FILE FILES "/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/esp32_interface_plugin.xml")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -97,6 +103,10 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/packages" TYPE FILE FILES "/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/build/diy_robotarm_wer24_driver/ament_cmake_index/share/ament_index/resource_index/packages/diy_robotarm_wer24_driver")
+endif()
+
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/controller_interface__pluginlib__plugin" TYPE FILE FILES "/home/hephaestus/ros2_ws/src/diy_robotarm_wer24_driver/build/diy_robotarm_wer24_driver/ament_cmake_index/share/ament_index/resource_index/controller_interface__pluginlib__plugin/diy_robotarm_wer24_driver")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
