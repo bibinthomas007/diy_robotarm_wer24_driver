@@ -19,8 +19,8 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "DataFormat.hpp"
-
+#include "data_format.hpp"
+#include "helpers.hpp"  //defines MyUtils namespace
 
 class RobotConnection;
 
