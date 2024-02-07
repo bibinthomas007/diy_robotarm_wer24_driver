@@ -56,21 +56,21 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   xacro
 )
 
-# compile hardware interface
-add_library(esp_interface_plugin
+#build and compile hardware interface
+add_library(esp32_interface_plugin
   SHARED
   src/esp32_interface.cpp
 )
 target_link_libraries(
-  esp_interface_plugin
+  esp32_interface_plugin
 )
 target_include_directories(
-  esp_interface_plugin
+  esp32_interface_plugin
   PRIVATE
   include
 )
 ament_target_dependencies(
-  esp_interface_plugin
+  esp32_interface_plugin
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
@@ -80,7 +80,7 @@ pluginlib_export_plugin_description_file(hardware_interface esp32_interface_plug
 
 # INSTALL
 install(
-  TARGETS esp_interface_plugin
+  TARGETS esp32_interface_plugin
   DESTINATION lib
 )
 install(
@@ -93,7 +93,7 @@ ament_export_include_directories(
   include
 )
 ament_export_libraries(
-  esp_interface_plugin
+  esp32_interface_plugin
 )
 
 
@@ -108,9 +108,6 @@ ament_export_dependencies(
   rclcpp_lifecycle
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
-
-# Install Python execs
-#ament_python_install_package(${PROJECT_NAME})
 
 
 
