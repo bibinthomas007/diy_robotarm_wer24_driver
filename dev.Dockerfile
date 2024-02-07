@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y ros-humble-hardware-interface
 RUN apt-get update && apt-get install -y ros-humble-pluginlib 
 RUN apt-get update && apt-get install -y ros-humble-rclcpp
 RUN apt-get update && apt-get install -y ros-humble-rclcpp-lifecycle
+RUN apt-get update && apt-get install -y ros-humble-ros2-control
 
 
 RUN sed -i 's|exec "\$@"|source "/home/'"${USER}"'/dependencies/diy_robot_full_cell_description_ws/install/setup.bash"\n&|' /ros_entrypoint.sh

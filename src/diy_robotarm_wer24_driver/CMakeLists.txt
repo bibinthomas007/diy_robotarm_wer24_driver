@@ -24,6 +24,7 @@ find_package(diy_robotarm_wer24_description REQUIRED)
 find_package(diy_soft_gripper_description REQUIRED)
 find_package(diy_robot_full_cell_description REQUIRED)
 find_package(xacro REQUIRED)
+find_package(ros2_control)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -54,6 +55,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   diy_soft_gripper_description
   diy_robot_full_cell_description
   xacro
+  ros2_control
 )
 
 #build and compile hardware interface
@@ -74,7 +76,7 @@ ament_target_dependencies(
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
-#export pligin to libary
+#export self written hardware interface plugin to libary
 pluginlib_export_plugin_description_file(hardware_interface esp32_interface_plugin.xml)
 
 
@@ -87,6 +89,12 @@ install(
   DIRECTORY include/
   DESTINATION include
 )
+install(DIRECTORY
+  launch
+  config
+  test
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 ## EXPORTS
 ament_export_include_directories(
@@ -94,13 +102,6 @@ ament_export_include_directories(
 )
 ament_export_libraries(
   esp32_interface_plugin
-)
-
-install(DIRECTORY
-  launch
-  config
-  test
-  DESTINATION share/${PROJECT_NAME}/
 )
 
 ament_export_dependencies(
