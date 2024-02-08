@@ -27,9 +27,6 @@ RUN apt-get update && apt-get install -y ros-humble-ros2-control
 RUN apt-get update && apt-get install -y ros-humble-ros2-controllers
 
 
-RUN sed -i 's|exec "\$@"|source "/home/'"${USER}"'/dependencies/diy_robot_full_cell_description_ws/install/setup.bash"\n&|' /ros_entrypoint.sh
-USER $USER
-
 #############################################################################
 ##   Stage 2: overwrite the comand from diy_cell image/ ##     
 ##############################################################################
