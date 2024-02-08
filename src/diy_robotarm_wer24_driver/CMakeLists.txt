@@ -25,7 +25,7 @@ find_package(diy_soft_gripper_description REQUIRED)
 find_package(diy_robot_full_cell_description REQUIRED)
 find_package(xacro REQUIRED)
 find_package(ros2_control)
-#find_package(forward_position_controller)
+find_package(ros2_controllers)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -57,7 +57,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   diy_robot_full_cell_description
   xacro
   ros2_control
- # forward_position_controller
+  ros2_controllers
 )
 
 #build and compile hardware interface
@@ -94,7 +94,6 @@ install(
 install(DIRECTORY
   launch
   config
-  test
   DESTINATION share/${PROJECT_NAME}/
 )
 

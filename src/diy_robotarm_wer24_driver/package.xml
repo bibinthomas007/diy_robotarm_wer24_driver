@@ -9,18 +9,22 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>diy_robotarm_wer24_description</depend>
-  <depend>diy_soft_gripper_description</depend>
-  <depend>diy_robot_full_cell_description</depend>
-  <depend>xacro</depend>
-  <depend>controller_interface</depend>
-  <depend>controller_manager</depend>
+
+  <depend>controller_manager_msgs</depend>
+  <depend>geometry_msgs</depend>
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
-
-
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>diy_robotarm_wer24_description</depend>
+  <depend>diy_soft_gripper_description</depend>
+  <depend>diy_robot_full_cell_description</depend>
+  <depend>xacro</depend>
+  <depend>ros2_control</depend>
+  <depend>ros2_controllers</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
