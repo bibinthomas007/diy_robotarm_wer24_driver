@@ -21,7 +21,7 @@ RobotConnection robotConnection;
 //redefine/ override the base controller methods to our custom purposes (following methods constructed in esp32_interface.hpp)
 namespace esp32_robot_driver {
 
-  // //Destruct Instances if controller manager is shut down via ctrl + C, because on_deactivate isnt called then (calls class from esp32_inteface.hpp)
+  //Destruct Instances if controller manager is shut down via ctrl + C, because on_deactivate isnt called then (calls class from esp32_inteface.hpp)
   ESP32Hardware::~ESP32Hardware() {
     //virtual destructor enables proper cleanup in polymorphic class hierarchies by ensuring the correct destructor is invoked for objects of derived classes when deleted through a base class pointer
     on_deactivate(rclcpp_lifecycle::State());
@@ -92,7 +92,7 @@ namespace esp32_robot_driver {
 //###########################################################################################################################
 // on_configure is called after on_init, parameters from ros2_control_urdf.xcacro are read here and passed to the controller
 //###########################################################################################################################
-  hardware_interface::CallbackReturn ESP32Hardware::on_configure(const rclcpp_lifecycle::State) {
+  hardware_interface::CallbackReturn ESP32Hardware::on_configure(const rclcpp_lifecycle::State& previous_state) {
 
     //Get the parameters for the robot:
     std::string tf_prefix = info_.hardware_parameters["tf_prefix"];
@@ -111,13 +111,6 @@ namespace esp32_robot_driver {
       return hardware_interface::CallbackReturn::ERROR;
     } 
 
-    //####################################################################################################################################
-    // // Set initial position values (defined in diy_robotarm_wer24_description package): //wird doch eigentlich in on_init schon gemacht
-    // for (auto i = 0; i < robotConnection.hw_states_axisPositions.size(); i++) {
-    //   robotConnection.hw_states_axisPositions[i] = 0;
-    //   robotConnection.hw_cmd_axisSetpoints[i] = 0;
-    // }
-
     RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "Successfully connected to the Robot via TCP-IP!");
 
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -132,8 +125,8 @@ namespace esp32_robot_driver {
 
     std::vector<hardware_interface::StateInterface> state_interfaces;
 
-//adds a hardware_interface::StateInterface object to the state_interfaces vector with the specified joint name,
-//interface type (position) and a pointer to the corresponding position value (in vector used in RobotConnection class)
+    //adds a hardware_interface::StateInterface object to the state_interfaces vector with the specified joint name,
+    //interface type (position) and a pointer to the corresponding position value (in vector used in RobotConnection class)
     for (uint8_t i = 0; i < info_.joints.size(); i++) {
       state_interfaces.emplace_back(hardware_interface::StateInterface(
         info_.joints[i].name,
@@ -141,6 +134,9 @@ namespace esp32_robot_driver {
         &robotConnection.hw_states_axisPositions[i]
       ));
     }
+
+    //feedback in terminal
+    RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "export of state interfaces to controller manager finisched sucessfully");
     return state_interfaces;
   }
 
@@ -159,13 +155,16 @@ namespace esp32_robot_driver {
         &robotConnection.hw_cmd_axisSetpoints[i]  
       ));
     }
+
+    //feedback in terminal
+    RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "export of state interfaces to controller manager finisched sucessfully");
     return command_interfaces;
   }
 
 //###############################################################################################################################
 // [realtime-loop] on_activate is called when the control loop gets activated --> interfaces get established/ datatransfer starts
 //###############################################################################################################################
-  hardware_interface::CallbackReturn ESP32Hardware::on_activate(const rclcpp_lifecycle::State) {
+  hardware_interface::CallbackReturn ESP32Hardware::on_activate(const rclcpp_lifecycle::State& previous_state) {
     RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "on_activate has been called, motors are on power!");
     robotConnection.toggleActuatorPower(true);
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -174,7 +173,7 @@ namespace esp32_robot_driver {
 //################################################################################################################################
 // [realtime-loop] on_deactivate is called when the control loop gets deactivated --> interfaces get closed and datatransfer stops
 //################################################################################################################################
-  hardware_interface::CallbackReturn ESP32Hardware::on_deactivate(const rclcpp_lifecycle::State ) {
+  hardware_interface::CallbackReturn ESP32Hardware::on_deactivate(const rclcpp_lifecycle::State& previous_state) {
     RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "on_deactivate has been called, motors are free!");
     robotConnection.toggleActuatorPower(false);
     return hardware_interface::CallbackReturn::SUCCESS;
@@ -183,7 +182,7 @@ namespace esp32_robot_driver {
 //###########################################################################################################################
 // [realtime-loop] read is called to read previous setpoints from the hardware --> read control-value (Istwert)
 //###########################################################################################################################
-  hardware_interface::return_type ESP32Hardware::read(const  rclcpp::Time, const rclcpp::Duration) {
+  hardware_interface::return_type ESP32Hardware::read(const rclcpp::Time& time, const rclcpp::Duration& period) {
     robotConnection.readData();  //readed values (robotConnection.hw_states_axisPositions) directly linked to the state interface in export_state_interfaces
     return hardware_interface::return_type::OK;
   }
@@ -191,7 +190,7 @@ namespace esp32_robot_driver {
 //###########################################################################################################################
 // [realtime-loop] write is called to write new commands to the hardware --> write setpoints to reach a control-error = 0
 //###########################################################################################################################
-  hardware_interface::return_type ESP32Hardware::write(const  rclcpp::Time, const rclcpp::Duration) {
+  hardware_interface::return_type ESP32Hardware::write(const rclcpp::Time& time, const rclcpp::Duration& period) {
     // Send the new data to the robot by using RobotConnection class
     robotConnection.sendData();
 
