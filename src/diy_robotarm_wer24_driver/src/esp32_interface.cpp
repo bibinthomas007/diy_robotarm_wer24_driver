@@ -100,14 +100,14 @@ namespace esp32_robot_driver {
     std::string ssid = info_.hardware_parameters["robot_ssid"];
     
     //feedback in terminal try 
-    RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "Searching for Robot in Network with SSID: ", ssid.c_str());
-    RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "Try to connect to Robot with IP-Adress: ", ipAddress.c_str());
+    RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "Searching for Robot in Network with SSID: %s", ssid.c_str());
+    RCLCPP_INFO(rclcpp::get_logger("ESP32_Driver"), "Try to connect to Robot with IP-Adress: %s", ipAddress.c_str());
 
     std::string errorMessage = "ERROR during Robot Connection";
 
     //Try to connect to the robot with the given configuration by calling the desired method in RobotConnection Class 
     if (robotConnection.initialize(ipAddress) == false) {
-      RCLCPP_FATAL(rclcpp::get_logger("ESP32_Driver"),"ERROR during Connection to Robot-IP", ipAddress.c_str(),"in Network", ssid.c_str());
+      RCLCPP_FATAL(rclcpp::get_logger("ESP32_Driver"),"ERROR during Connection to Robot-IP %s",  ssid.c_str(), ipAddress.c_str());
       return hardware_interface::CallbackReturn::ERROR;
     } 
 
