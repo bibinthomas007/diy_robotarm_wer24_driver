@@ -65,7 +65,7 @@ public:
   //##################################################################################### 
   // Connect to the robot hardware on the given IP Address. 
 
-  bool initialize(std::string ipAddress, std::string ssid, std::string & errorMessage) {
+  bool initialize(std::string ipAddress) {
 
     // Create a socket handle:
     socketConnection_ = socket(AF_INET, SOCK_STREAM, 0);

@@ -25,8 +25,8 @@ namespace Communication {
       bool emergencyStop;
       uint8_t reserved[1];
 
-      bool enablePower;             // Achsen aktivieren
-      int32_t jointSetpoints[6];    // Achsstellungen
+      bool enablePower;             // enable the axis
+      int32_t jointSetpoints[6];    // Joint setpoints in millidegrees
     };
 
     uint8_t receiveBuffer[64];
@@ -39,8 +39,8 @@ namespace Communication {
       enum ErrorCode errorCode;
       uint8_t reserved[1];
 
-      bool active;                  // Achsen activ/ not activ
-      int32_t jointPositions[6];    // Achsstellungen
+      bool active;                  // feedback if axis are enabled ore disabled
+      int32_t jointPositions[6];    // current jount positions in millidegreed (calculated on ESP side from counted steps)
 
     };
     uint8_t sendBuffer[64];
