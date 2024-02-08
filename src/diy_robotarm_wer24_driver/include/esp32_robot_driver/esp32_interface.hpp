@@ -35,15 +35,15 @@ namespace esp32_robot_driver{
 
     hardware_interface::CallbackReturn on_init(const hardware_interface::HardwareInfo & info) override; //declares a member function named on_init. It is declared as an override of a function in the base class
 
-    hardware_interface::CallbackReturn on_configure(const   rclcpp_lifecycle::State   & previous_state) override;
+    hardware_interface::CallbackReturn on_configure(const   rclcpp_lifecycle::State) override;
 
     std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
     std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
 
-    hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State & previous_state) override;
+    hardware_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State) override;
 
-    hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & previous_state) override;
+    hardware_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State) override;
 
     hardware_interface::return_type read(const  rclcpp::Time & time, const rclcpp::Duration & period) override;
 
