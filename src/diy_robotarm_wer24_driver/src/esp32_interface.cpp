@@ -183,7 +183,7 @@ namespace esp32_robot_driver {
 //###########################################################################################################################
 // [realtime-loop] read is called to read previous setpoints from the hardware --> read control-value (Istwert)
 //###########################################################################################################################
-  hardware_interface::return_type ESP32Hardware::read(const  rclcpp::Time, const rclcpp::Duration & period) {
+  hardware_interface::return_type ESP32Hardware::read(const  rclcpp::Time, const rclcpp::Duration) {
     robotConnection.readData();  //readed values (robotConnection.hw_states_axisPositions) directly linked to the state interface in export_state_interfaces
     return hardware_interface::return_type::OK;
   }
@@ -191,7 +191,7 @@ namespace esp32_robot_driver {
 //###########################################################################################################################
 // [realtime-loop] write is called to write new commands to the hardware --> write setpoints to reach a control-error = 0
 //###########################################################################################################################
-  hardware_interface::return_type ESP32Hardware::write(const  rclcpp::Time, const rclcpp::Duration & period) {
+  hardware_interface::return_type ESP32Hardware::write(const  rclcpp::Time, const rclcpp::Duration) {
     // Send the new data to the robot by using RobotConnection class
     robotConnection.sendData();
 
