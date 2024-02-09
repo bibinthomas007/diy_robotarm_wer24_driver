@@ -8,13 +8,6 @@ ARG ROS_DISTRO=humble
 FROM diy-full-description-dev/ros-render:"$ROS_DISTRO" as diy-robotarm-driver
 
 
-# Source and Build the diy-full cell description package (must be redone inside the driver-container)
-RUN cd /home/$USER/dependencies/diy_robot_full_cell_description_ws && \
-   . /opt/ros/$ROS_DISTRO/setup.sh && \
-   . /home/$USER/dependencies/diy_robotarm_wer24_description_ws/install/setup.sh && \
-   . /home/$USER/dependencies/diy_soft_gripper_description_ws/install/setup.sh && \
-   colcon build
-
 # Add built diy-full cell description package to entrypoint by calling install/setup.bash
 USER root
 RUN apt-get update && apt-get install -y ros-humble-controller-interface 
@@ -25,7 +18,7 @@ RUN apt-get update && apt-get install -y ros-humble-rclcpp
 RUN apt-get update && apt-get install -y ros-humble-rclcpp-lifecycle
 RUN apt-get update && apt-get install -y ros-humble-ros2-control
 RUN apt-get update && apt-get install -y ros-humble-ros2-controllers
-
+USER $USER
 
 #############################################################################
 ##   Stage 2: overwrite the comand from diy_cell image/ ##     
