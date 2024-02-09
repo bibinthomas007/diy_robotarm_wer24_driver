@@ -6,6 +6,7 @@ from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.descriptions import ParameterValue
+from launch.conditions import IfCondition
 
 
 def generate_launch_description():
@@ -64,6 +65,13 @@ def generate_launch_description():
             description="The SSID from the common network (PC and ESP must be member of this network)",
         )
     )
+    declared_arguments.append(
+    DeclareLaunchArgument(
+      "rviz",
+      default_value="false",
+      description="Start RViz2 automatically with this launch file, shoulf be deactivated when launching moveit from this base image.",
+    )
+  )
 
 
     tf_prefix = LaunchConfiguration("tf_prefix")
@@ -74,6 +82,9 @@ def generate_launch_description():
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     robot_ip = LaunchConfiguration("robot_ip")
     robot_ssid = LaunchConfiguration("robot_ssid")
+
+    rviz = LaunchConfiguration("rviz")
+
 
 
 #define the robot description content
@@ -137,6 +148,7 @@ def generate_launch_description():
         name="rviz2",
         output="log",
         arguments=["-d", rviz_config_file],
+        condition=IfCondition(rviz)
     )
 
     joint_state_broadcaster_spawner = Node(
