@@ -4,8 +4,9 @@
 controller_manager:
   ros__parameters:
     update_rate: 50  # Hz update rate for the control loop
+    tf_prefix: "$(arg tf_prefix)$(arg tf_prefix_arm)"
 
-    #init the used controllers with specific hardware-interface type
+#init the used controllers with specific hardware-interface type
     #every controller subscribes on a 2 ROS-Topics e.g. [trajectory_msgs::msg::JointTrajectory and control_msgs::msg::JointTrajectoryControllerState]
     #setpoints are read from the ros2 side and control-argiables (actual value) are read from the hardware interface (defined below/ in urdf) with the read() method
     #the control deviation is calculated inside the controller and new commands are passed to the hardware interface with the write() method
@@ -31,12 +32,12 @@ controller_manager:
 forward_position_controller:
   ros__parameters:
     joints:
-      - "arm_shoulder"
-      - "arm_upper_arm"
-      - "arm_forearm"
-      - "arm_wrist_1"
-      - "arm_wrist_2"
-      - "arm_wrist_3"
+      - "$(var tf_prefix)$(var tf_prefix_arm)shoulder"
+      - "$(var tf_prefix)$(var tf_prefix_arm)upper_arm"
+      - "$(var tf_prefix)$(var tf_prefix_arm)forearm"
+      - "$(var tf_prefix)$(var tf_prefix_arm)wrist_1"
+      - "$(var tf_prefix)$(var tf_prefix_arm)wrist_2"
+      - "$(var tf_prefix)$(var tf_prefix_arm)wrist_3"
     interface_name: position
 
 
@@ -44,12 +45,12 @@ forward_position_controller:
 joint_trajectory_position_controller:
   ros__parameters:
     joints:
-      - "arm_shoulder"
-      - "arm_upper_arm"
-      - "arm_forearm"
-      - "arm_wrist_1"
-      - "arm_wrist_2"
-      - "arm_wrist_3"
+      - "$(var tf_prefix)$(var tf_prefix_arm)shoulder"
+      - "$(var tf_prefix)$(var tf_prefix_arm)upper_arm"
+      - "$(var tf_prefix)$(var tf_prefix_arm)forearm"
+      - "$(var tf_prefix)$(var tf_prefix_arm)wrist_1"
+      - "$(var tf_prefix)$(var tf_prefix_arm)wrist_2"
+      - "$(var tf_prefix)$(var tf_prefix_arm)wrist_3"
     #trajectory controller needs at least position feedback from the hardware (so we need to define state and command interfaces at this point)
     command_interfaces:
       - position

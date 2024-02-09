@@ -115,14 +115,14 @@ def generate_launch_description():
     )
 
     #load the controller manager yaml
-    robot_controllers = PathJoinSubstitution([FindPackageShare(arm_driver_package), "config", "esp32_controller.yaml"])
+    robot_controllers = PathJoinSubstitution([FindPackageShare(arm_driver_package), "config", "esp32_controller.copy.yaml"])
 
 
 #define the nodes to launch 
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[robot_description, robot_controllers,{"tf_prefix": tf_prefix, "tf_prefix_arm": tf_prefix_arm}],
+        parameters=[robot_description, robot_controllers],
         output="both",
     )
     robot_state_pub_node = Node(
