@@ -38,9 +38,9 @@ namespace esp32_robot_driver {
     }
     //Call methods from robot_connection.hpp, resize there initialized arrays to match the amount of joints provided in the urdf (info_) and init them with NaN or 0
     // READ-VALUES (Axis Positions)
-    robotConnection.hw_states_axisPositions.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+    robotConnection.hw_states_axisPositions.resize(info_.joints.size(),0);
     // READ/WRITE-Values (Axis Setpoints)
-    robotConnection.hw_cmd_axisSetpoints.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN()); 
+    robotConnection.hw_cmd_axisSetpoints.resize(info_.joints.size(),0); 
     //#######################################################################robotConnection.hw_cmd_axisSetpoints_prev.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
     
 
