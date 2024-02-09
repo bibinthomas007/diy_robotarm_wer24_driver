@@ -18,15 +18,57 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
+            "tf_prefix_sub",
+            default_value='"sub_"',
+            description="Prefix for the subframe of the cell, should be unique to avoid namespace collisions",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tf_prefix_arm",
+            default_value='"arm_"',
+            description="Prefix for the robotarm inside the cell, should be unique to avoid namespace collisions",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "tf_prefix_grip",
+            default_value='"grip_"',
+            description="Prefix for the gripper inside the cell, should be unique to avoid namespace collisions",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
             "use_fake_hardware",
-            default_value='"false"',
+            default_value='"true"',
             description="start the robot with fake(mock) hardware or real controller",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "robot_ip",
+            default_value='"192.168.212.203"',
+            description="The IP-Adress with which the robot hardware joins the common network",
+        )
+    )  
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "robot_ssid",
+            default_value='"DIY-Robotics"',
+            description="The SSID from the common network (PC and ESP must be member of this network)",
         )
     )
 
 
     tf_prefix = LaunchConfiguration("tf_prefix")
+    tf_prefix_sub = LaunchConfiguration("tf_prefix_sub")
+    tf_prefix_arm = LaunchConfiguration("tf_prefix_arm")
+    tf_prefix_grip = LaunchConfiguration("tf_prefix_grip")
+
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
+    robot_ip = LaunchConfiguration("robot_ip")
+    robot_ssid = LaunchConfiguration("robot_ssid")
+
 
     robot_description_content = Command(
         [
@@ -36,6 +78,21 @@ def generate_launch_description():
             " ",
             "tf_prefix:=",
             tf_prefix,
+            " ",
+            "tf_prefix_sub:=",
+            tf_prefix_sub,
+            " ",
+            "tf_prefix_arm:=",
+            tf_prefix_arm,
+            " ",
+            "tf_prefix_grip:=",
+            tf_prefix_grip,
+            " ",
+            "robot_ip:=",
+            robot_ip,
+            " ",
+            "robot_ssid:=",
+            robot_ssid,
             " ",
             "use_fake_hardware:=",
             use_fake_hardware,
