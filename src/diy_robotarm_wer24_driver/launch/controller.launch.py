@@ -47,7 +47,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "use_fake_hardware",
             default_value='"true"',
-            description="start the robot with fake(mock) hardware or real controller",
+            description="start the robot with fake (mock) hardware or real controller",
         )
     )
     declared_arguments.append(
