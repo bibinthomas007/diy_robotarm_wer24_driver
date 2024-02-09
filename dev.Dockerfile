@@ -5,7 +5,7 @@ ARG ROS_DISTRO=humble
 # set description image (of running diy_robotarm_full_cell_description container) to there specified image name:
 # --> diy-full-description/ros-render:"$ROS_DISTRO"
 # we dont need to specify the whole docker stages from there, but sourcing inside this container from the image is necesary!
-FROM diy-full-description-dev/ros-render:"$ROS_DISTRO" as diy-robotarm-driver
+FROM diy-full-description/ros-render:"$ROS_DISTRO" as diy-robotarm-driver
 
 
 # Add built diy-full cell description package to entrypoint by calling install/setup.bash
