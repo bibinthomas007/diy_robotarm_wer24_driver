@@ -1,6 +1,6 @@
 #!/bin/bash
 ##############################################################################
-##                   Build the image, using dev.Dockerfile                  ##
+##                       Build the image, using Dockerfile                  ##
 ##############################################################################
 ROS_DISTRO=humble
 
@@ -16,22 +16,20 @@ docker build \
   --build-arg ROS_DISTRO="$ROS_DISTRO" \
   --build-arg UID="$uid" \
   --build-arg GID="$gid" \
-  -f dev.Dockerfile \
-  -t diy-robotarm-espDriver-dev/ros-render:"$ROS_DISTRO" .
+  -f Dockerfile \
+  -t diy_robotarm-espDriver-dev/ros-render:"$ROS_DISTRO" .
 
 ##############################################################################
 ##                            Run the container                             ##
 ##############################################################################
-SRC_CONTAINER=/home/hephaestus/ros2_ws/src
-SRC_HOST="$(pwd)"/src
 
 docker run \
   --name robot_arm_driver \
   --rm \
   -it \
   --net=host \
-  -v "$SRC_HOST":"$SRC_CONTAINER":rw \
   -e DISPLAY="$DISPLAY" \
-  diy-robotarm-espDriver-dev/ros-render:"$ROS_DISTRO" bash
+  -t diy-robotarm-espDriver-dev/ros-render:"$ROS_DISTRO" bash
 
 # display and network access is already passed to the container
+# use bash command to overwrita all CMD lines from earlier stages
