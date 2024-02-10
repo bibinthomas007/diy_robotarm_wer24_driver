@@ -80,7 +80,6 @@ USER root
 RUN sed -i 's|exec "\$@"|source "/home/'"${USER}"'/dependencies/diy_soft_gripper_description_ws/install/setup.bash"\n&|' /ros_entrypoint.sh
 USER $USER
 
-
 ##############################################################################
 ##               4. stage: cell-description repo from github                ##
 ##############################################################################
@@ -102,8 +101,6 @@ RUN cd /home/$USER/dependencies/diy_robot_full_cell_description_ws && \
 USER root
 RUN sed -i 's|exec "\$@"|source "/home/'"${USER}"'/dependencies/diy_robot_full_cell_description_ws/install/setup.bash"\n&|' /ros_entrypoint.sh
 USER $USER
-
-
 
 ##############################################################################
 ##                  5. stage: arm-driver repo from github                   ##     
@@ -144,5 +141,7 @@ USER $USER
 ## 6. stage: start the controller with fake hardware when container starts  ##     
 ##############################################################################
 
-#CMD ["ros2", "launch", "diy_robot_full_cell_description", "visualize.launch.py"]
+#default command which starts all controllers with fake hardware and displays the robot_description in rviz
+# --> make sure to overwrite this CMD in the moveit package to abvoid launching multiple versions of rviz and controllers!
+CMD ["ros2", "launch", "diy_robotarm_wer24_driver", "controller.launch.py", "rviz:=true"]
 
