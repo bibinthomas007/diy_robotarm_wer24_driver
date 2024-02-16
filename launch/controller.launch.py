@@ -167,7 +167,7 @@ def generate_launch_description():
     joint_trajectory_controller_spawner = Node(
     package="controller_manager",
     executable="spawner",
-    arguments=["joint_trajectory_position_controller", "--controller-manager", "/controller_manager"],          
+    arguments=["joint_trajectory_controller", "--controller-manager", "/controller_manager"],          
     )
 
     # Delay start of joint_trajectory_controller spawner after `joint_state_broadcaster` spawner
