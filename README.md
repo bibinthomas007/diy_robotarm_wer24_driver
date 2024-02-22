@@ -26,7 +26,7 @@ Refer to the main Readme.md https://github.com/mathias31415/diy_robotics/blob/ma
  - CMakeLists.txt and package.xml are defining this build process (wich dependencies are needed, which file should be installed where in the created directories, ...)
  - config, include, src and launch are the directories which are containing the source files for this package, they will be described in the following
 
-## Short introduction into ROS2 Control
+## Short Introduction into ROS2 Control
 
 ROS 2 Control is a framework for controlling robotic systems in the Robot Operating System 2 (ROS 2) ecosystem. It provides a modular and flexible architecture for interfacing with various hardware components, such as motors and sensors. This framework enables developers to design and implement control algorithms for a wide range of robotic platforms. ROS 2 Control offers standardized interfaces for hardware abstraction and device drivers, facilitating interoperability across different robotic systems. It supports both position and velocity control, as well as efforts to accommodate diverse robotic applications and control strategies.
 
@@ -40,9 +40,13 @@ The hardware innterface plugin is called in the dependencie package "diy_robotar
 
 ## Definition of the Controller Manager
 
+The controller manager and the controller interfaces itself are defined in ````./config/esp32_controller.yaml````. 
+
+
 
 
 ## Definition of the Hardware Interface Plugin
+
 
 
 ## Launch
@@ -53,7 +57,8 @@ We have implemented three launch files for three different purposses:
 - ````forward_controller.launch.py````: This is only for testing purposes of our hardware interface. This launch file will launch the **forward_command_controller** only. By passing the launch argument ````use_fake_hardware:=false````in launch, the driver trys to connect to the real robot hardware. Now we have done a real bringup of the robot and you should be able to control the robot by publishing position commands on this topic: ````ros2 topic pub /forward_position_controller/commands std_msgs/msg/Float64MultiArray "{data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}"````. In the data array you can pass any float value between +/- pi, this equals the absolute target joint position in radiants.
 - ````trajectory_controller.launch.py````: This launch file gets called in the final application and launches the **trajectory_controller** only. Moveit uses this controller to send the calculated trajectories to the robot. A trajectory consists of waypoint positions and timestamps. Here we do a real bringup of the robot too.
 
-Note: Every joint interface defined in the ````/home/$USER/dependencies/diy_robotarm_wer24_description/urdf/diy_robotarm.ros2_control.urdf.xacro```` can only be linked to one single controller interface defined in the ````./config/esp32_controller.yaml````. So make sure you don't launch a controller twice or launch the forward_command_controller and the trajectory_controller at the same time!
+**Note:** <br>
+Every joint interface defined in the ````/home/$USER/dependencies/diy_robotarm_wer24_description/urdf/diy_robotarm.ros2_control.urdf.xacro```` can only be linked to one single controller interface defined in the ````./config/esp32_controller.yaml````. So make sure you don't launch a controller twice or launch the forward_command_controller and the trajectory_controller at the same time!
 
 
 
