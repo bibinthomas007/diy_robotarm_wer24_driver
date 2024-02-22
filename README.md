@@ -38,12 +38,80 @@ The following graphics gives you a short overview about the ROS2-control archite
 
 The hardware innterface plugin is called in the dependencie package "diy_robotarm_wer24_description" ````./urdf/diy_robotarm.ros2_control.urdf.xacro```` with ```` <plugin>esp32_robot_driver/ESP32Hardware</plugin>````. For more informations about generating a ROS2 control tag for real hatdware or for fake hardware please refer to this repo (we mentioned this bit weired ros2 architecture there as well): https://github.com/RobinWolf/diy_robotarm_wer24_description
 
-## Definition of the Controller Manager
+## Definition of the Controller Manager and the Controller Interfaces
 
 The controller manager and the controller interfaces itself are defined in ````./config/esp32_controller.yaml````. 
 
+### Definition of the Controller Manager:
+```yaml
+controller_manager:
+  ros__parameters:
+    update_rate: 50  
+    joint_state_broadcaster: 
+      type: joint_state_broadcaster/JointStateBroadcaster 
+    forward_position_controller: 
+      type: forward_command_controller/ForwardCommandController
+    joint_trajectory_controller: 
+      type: joint_trajectory_controller/JointTrajectoryController
+````
+- the update_rate defines the frequency (Hz) of the realtime control loop reading and writing messages to or from the robot.
+- the joint_state_broadcaster takes take the joint state information provided by the joint state publisher and broadcasting it on /joint_states topic
+- the forward_position_controller passes command signal to every joint (controls all joints dependent to each of them) --> used by moveit
+- the joint_trajectory_controller passes command signal from the command topic down to single joints. Command signal and joint hardware interface are of the same type (position/ angle)
 
+### Definition of the joint_trajectory_controller:
 
+The forward_position_controller os defined the same, but only passing the joints and interface parameter, we will explain the trajectory controller only because this is more complex and usesd in the final application.
+````yaml
+joint_trajectory_controller:
+  ros__parameters:
+    joints:
+      - "arm_shoulder"
+      - "arm_upper_arm"
+      - "arm_forearm"
+      - "arm_wrist_1"
+      - "arm_wrist_2"
+      - "arm_wrist_3"
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0 
+    allow_partial_joints_goal: false
+    open_loop_control: true
+    allow_integration_in_goal_trajectories: true
+    constraints:
+      stopped_velocity_tolerance: 0.01
+      goal_time: 0.0
+````
+- First we define the names of the joints and joint interfaces the controller should get connected to by the controller manager, as mentioned below they must match the definitions in the ````/home/$USER/dependencies/diy_robotarm_wer24_description/urdf/diy_robotarm.ros2_control.urdf.xacro````.
+
+```xml
+ <joint name="${tf_prefix}shoulder">
+     <!--define command interface PcToRobot-->
+     <command_interface name="position">
+         <param name="min">{-pi}</param>
+         <param name="max">{pi}</param>
+     </command_interface>
+         <!--define state interface RobotToPC (NOTE: our Hardware is an open-loop control system!)-->
+     <state_interface name="position">
+     <!-- initial position for the FakeSystem and simulation -->
+         <param name="initial_value">${initial_positions["shoulder"]}</param>
+     </state_interface>
+ </joint>
+  ```
+
+We used a command interface named ````position```` and a state interface also named ````position````. Because we are passing a default parameter ````${tf_prefix}```` for namespace reasons to the joint interface name definition. ````arm_```` in our case (for full parameter description in the urdf files please refer to this readme: https://github.com/RobinWolf/diy_robot_full_cell_description/blob/main/README.md)
+
+Moreover the joint_trajecotry controller is set up with some additional parameters which influence the controller behavoirs.
+
+- The controller works as an action-server ````joint_trajectory_controller/follow_joint_trajectory````, which can called by an action-client (simplyfied you can say the client is moveit). ````state_publish_rate```` and ````action_motitor_rate````define frequencies the controller publishes commands and monitors states on the topics the server is connedted to. We will come back to this later in the moveit repo: https://github.com/RobinWolf/diy_robot_wer24_moveit
+- Setting ````open_loop_control = true```` is done because our harware can't provide a real joint state monitoring. When this flag is set true the controller uses the command setpoint of the last control loop iteration as the state of the current control loop iteration.
+- The other paramerters define some conatraints for trajectory calculation and execution.
+
+**Note:** <br>
+Because we were not able to parametrize the definitions in the controller manager at all, be careful when using other prefixes instaed of the defaults. The defined names match our default launch prefixes, but if you want to modify the prefixes for some reason, make sure to change the joint interface name definitions in the controller definition too!
 
 ## Definition of the Hardware Interface Plugin
 
@@ -54,11 +122,11 @@ The controller manager and the controller interfaces itself are defined in ````.
 We have implemented three launch files for three different purposses: 
 
 - ````viszualize.launch.py````: This is only for visualization and checking purposes of the description packages in the dependencies-directory, because we don't do a real bringup of the robot model. Joint States are just published by the GUI on the specific ROS-topic, we don't launch our drivers!
-- ````forward_controller.launch.py````: This is only for testing purposes of our hardware interface. This launch file will launch the **forward_command_controller** only. By passing the launch argument ````use_fake_hardware:=false````in launch, the driver trys to connect to the real robot hardware. Now we have done a real bringup of the robot and you should be able to control the robot by publishing position commands on this topic: ````ros2 topic pub /forward_position_controller/commands std_msgs/msg/Float64MultiArray "{data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}"````. In the data array you can pass any float value between +/- pi, this equals the absolute target joint position in radiants.
+- ````forward_controller.launch.py````: This is only for testing purposes of our hardware interface. This launch file will launch the **forward_position_controller** only. By passing the launch argument ````use_fake_hardware:=false````in launch, the driver trys to connect to the real robot hardware. Now we have done a real bringup of the robot and you should be able to control the robot by publishing position commands on this topic: ````ros2 topic pub /forward_position_controller/commands std_msgs/msg/Float64MultiArray "{data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}"````. In the data array you can pass any float value between +/- pi, this equals the absolute target joint position in radiants.
 - ````trajectory_controller.launch.py````: This launch file gets called in the final application and launches the **trajectory_controller** only. Moveit uses this controller to send the calculated trajectories to the robot. A trajectory consists of waypoint positions and timestamps. Here we do a real bringup of the robot too.
 
 **Note:** <br>
-Every joint interface defined in the ````/home/$USER/dependencies/diy_robotarm_wer24_description/urdf/diy_robotarm.ros2_control.urdf.xacro```` can only be linked to one single controller interface defined in the ````./config/esp32_controller.yaml````. So make sure you don't launch a controller twice or launch the forward_command_controller and the trajectory_controller at the same time!
+Every joint interface defined in the ````/home/$USER/dependencies/diy_robotarm_wer24_description/urdf/diy_robotarm.ros2_control.urdf.xacro```` can only be linked to one single controller interface defined in the ````./config/esp32_controller.yaml````. So make sure you don't launch a controller twice or launch the forward_position_controller and the trajectory_controller at the same time!
 
 
 
