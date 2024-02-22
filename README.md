@@ -115,7 +115,18 @@ Because we were not able to parametrize the definitions in the controller manage
 
 ## Definition of the Hardware Interface Plugin
 
-The hardware insterface plugin defines teh methods the controller uses while controlling the real robot, so here we implement our harware communication.
+The hardware interface plugin defines the methods the controller uses while controlling the real robot, so here we implement our harware communication.
+
+- on_init: called when initializing the controller (init variables, declare and initializs node parameters used by the controller such as ````robotConnection.hw_states_axisPositions````)
+- on_configure: called after on_init, parameters from ros2_control_urdf.xcacro are read here and passed to the controller ( ````robot_ip````, ````robot_ssid````, ````tf_prefix```` ) export_state_interfaces: called to match the defined state interfaces from the urdf to set them up and registered for communication with the underlying hardware (in our case ````position````)
+- export_command_interfaces: called to match the defined commend interfaces from the urdf to set them up and registered for communication with the underlying hardware (in our case ````position````)
+- on_activate: called when the realtime control loop gets activated --> interfaces get established/ datatransfer starts. Moreover we set the ````robotConnection.toggleActuatorPower````bool of our message to ````true```` to indicate that the communication to the robot was established sucessfully.
+- on_deactivate: called when the realtime control loop gets deactivated --> interfaces get closed and datatransfer stops. Moreover we set the ````robotConnection.toggleActuatorPower````bool of our message to ````false````.
+- read: called to read joint states (because oben loop control the previous setpoints) from the hardware --> read control-value (Istwert). The states position array from the incoming message (RobotToPC)````robotConnection.hw_states_axisPositions```` gets read into the ROS ecosystem.
+- write: called to send new setpoints to the hardware --> wrire setpoint-value (Sollwert). The next setpoint position array from the ROS2 ecosystem gets written to the outgoing message (PCToRobot) ````robotConnection.hw_cmd_axisPositions````.
+
+The data communication is handled by the methods implemented in the header files ````./include/robot_connection.hpp```` and ````./include/data_format.hpp````. If you are interested in knowing more about the data exchange or the communication setup itself please refer to the ESP32 software repo: https://github.com/mathias31415/diy_robotics/tree/main/diy_robotics_arm_esp32
+
 The plugin gets loaded when you set the launch argument ````use_fake_hardware:=false```` when launching the controller package. You define which plugin you harwdare should use in the ````/home/$USER/dependencies/diy_robotarm_wer24_description/urdf/diy_robotarm.ros2_control.urdf.xacro```` as shown below:
 
 To call the plugin we have to export it first with the pliginlib ROS-extention which makes our ````./src/esp32_interface```` acessable for the ROS2 ecosystem by creating the ````esp32_interface_plugin.xml```` file in our driver workspace:
@@ -130,7 +141,7 @@ To call the plugin we have to export it first with the pliginlib ROS-extention w
   </class>
 </library>
 ```
-Now we can access the plugin named ````esp32_robot_driver/ESP32Hardware```` in the URDF definition (where esp32_robot_driver is teh namespace of the interface and ESP32Hardware the class containing the controller methods)
+Now we can access the plugin named ````esp32_robot_driver/ESP32Hardware```` in the URDF definition (where esp32_robot_driver is the namespace of the interface and ESP32Hardware the class containing the controller methods). We also have to pass all the parameters wee need in our implemented controller methods.
 
 ```xml
  <hardware>
