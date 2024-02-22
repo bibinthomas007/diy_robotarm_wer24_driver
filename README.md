@@ -1,16 +1,5 @@
 # diy_robotarm_wer24_driver
 
-This ROS2 package contains the driver for our DIY-Robot.
-This driver will be the interface between ROS (ruinning in docker containers on your LINUX machine) and the Hardware (Task running on an ESP32 which controlls the robot axis by DRV8825 stepper drivers).
-The connection will be established via network (so the robot/esp has an IP Adress which ROS is talking to via TCP/IP Protocol).
-
-This package is a part of fully modular designed ROS2 integration for our diy-robot.
-Because of the (not so well choosen) urdf-structure -ros2 control must be defined inside the urdf model- this driver package needs the whole description package (diy_robotarm_full_cell_description) already running in an container.
-Thats why we use the image of the running docker container as base image for our docker container which will run the driver package.
-
-
-
-
 ## thematical Classification
 
 This ROS2 package contains the driver for our DIY-Robot.
@@ -30,15 +19,26 @@ Refer to the main Readme.md https://github.com/mathias31415/diy_robotics/blob/ma
 
 ## Package Structure
 
-![arm_driver_file_tree](images/arm_driver_file_tree.png)
+![arm_driver_file_tree](images/arm_driver_files_tree.png)
 
  - images and README.md are only for docomentation purposes
  - Dockerfile, run.sh and dds_profile.xml are used to create the docker container where ROS is running in
  - CMakeLists.txt and package.xml are defining this build process (wich dependencies are needed, which file should be installed where in the created directories, ...)
- - meshes, rviz, urdf, config and launch are the directories which are containing the source files for this package, they will be described in the following
+ - config, include, src and launch are the directories which are containing the source files for this package, they will be described in the following
 
+## Short introduction into ROS2 Control
 
-## URDF Definition
+ROS 2 Control is a framework for controlling robotic systems in the Robot Operating System 2 (ROS 2) ecosystem. It provides a modular and flexible architecture for interfacing with various hardware components, such as motors and sensors. This framework enables developers to design and implement control algorithms for a wide range of robotic platforms. ROS 2 Control offers standardized interfaces for hardware abstraction and device drivers, facilitating interoperability across different robotic systems. It supports both position and velocity control, as well as efforts to accommodate diverse robotic applications and control strategies.
+
+In our case we will implement a hardware interface to our diy-hardware which will be position-controlled. Moureover we will define two controllers. On the one hand a ````forward_command_controller/ForwardCommandController```` which is used only for testing purposes and on the other hand a ```joint_trajectory_controller/JointTrajectoryController```` which will be used by moveit2.
+
+The following graphics gives you a short overview about the ROS2-control architecture (source: https://control.ros.org/humble/doc/getting_started/getting_started.html):
+
+![ros_control](images/ros_control.png)
+
+The hardware innterface plugin is called in ***the ros2control urdf in** with ```` <plugin>esp32_robot_driver/ESP32Hardware</plugin>```  
+
+## Definition of the Controller Manager
 
 
 ## Launch
