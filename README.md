@@ -115,7 +115,39 @@ Because we were not able to parametrize the definitions in the controller manage
 
 ## Definition of the Hardware Interface Plugin
 
+The hardware insterface plugin defines teh methods the controller uses while controlling the real robot, so here we implement our harware communication.
+The plugin gets loaded when you set the launch argument ````use_fake_hardware:=false```` when launching the controller package. You define which plugin you harwdare should use in the ````/home/$USER/dependencies/diy_robotarm_wer24_description/urdf/diy_robotarm.ros2_control.urdf.xacro```` as shown below:
 
+To call the plugin we have to export it first with the pliginlib ROS-extention which makes our ````./src/esp32_interface```` acessable for the ROS2 ecosystem by creating the ````esp32_interface_plugin.xml```` file in our driver workspace:
+```xml
+<library path="esp32_interface_plugin">
+  <class name="esp32_robot_driver/ESP32Hardware"            
+         type="esp32_robot_driver::ESP32Hardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+		ROS2 Control System Driver for DIY Robotic Projects (WIFI Connection to ESP32 on the Hardware-Side).
+    </description>
+  </class>
+</library>
+```
+Now we can access the plugin named ````esp32_robot_driver/ESP32Hardware```` in the URDF definition (where esp32_robot_driver is teh namespace of the interface and ESP32Hardware the class containing the controller methods)
+
+```xml
+ <hardware>
+     <xacro:if value="${use_fake_hardware}">
+        <plugin>mock_components/GenericSystem</plugin>
+        <param name="fake_sensor_commands">${fake_sensor_commands}</param>
+        <param name="state_following_offset">0.0</param>
+     </xacro:if>
+     <!--unless no simulation is required, use real hardware-->
+     <xacro:unless value="${use_fake_hardware}">
+         <plugin>esp32_robot_driver/ESP32Hardware</plugin>    <!--call our plugin for interfacing with the esp (this is the Driver!)-->
+         <param name="robot_ip">${robot_ip}</param>
+         <param name="robot_ssid">${robot_ssid}</param>
+         <param name="tf_prefix">${tf_prefix}</param>
+     </xacro:unless>
+ </hardware>
+```
 
 ## Launch
 
