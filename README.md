@@ -167,7 +167,7 @@ We have implemented three launch files for three different purposses:
 - ````viszualize.launch.py````: This is only for visualization and checking purposes of the description packages in the dependencies-directory, because we don't do a real bringup of the robot model. Joint States are just published by the GUI on the specific ROS-topic, we don't launch our drivers!
 - ````forward_controller.launch.py````: This is only for testing purposes of our hardware interface. This launch file will launch the **forward_position_controller** only. By passing the launch argument ````use_fake_hardware:=false````in launch, the driver trys to connect to the real robot hardware. Now we have done a real bringup of the robot and you should be able to control the robot by publishing position commands on this topic: ````ros2 topic pub /forward_position_controller/commands std_msgs/msg/Float64MultiArray "{data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}"````. In the data array you can pass any float value between +/- pi, this equals the absolute target joint position in radiants.
 - ````trajectory_controller.launch.py````: This launch file gets called in the final application and launches the **trajectory_controller** only. Moveit uses this controller to send the calculated trajectories to the robot. A trajectory consists of waypoint positions and timestamps. Here we do a real bringup of the robot too.
-- 
+
 If you notice a log-message like this in your terminal you run the controller you are sucessfully connected to the robot: ````[ros2_control_node-1] [INFO] [1708697874.866430796] [ESP32_Driver]: Successfully connected to the Robot via TCP-IP! ````
 
 **Note:** <br>
