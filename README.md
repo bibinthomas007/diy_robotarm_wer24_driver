@@ -149,7 +149,7 @@ Now we can access the plugin named ````esp32_robot_driver/ESP32Hardware```` in t
         <plugin>mock_components/GenericSystem</plugin>
         <param name="fake_sensor_commands">${fake_sensor_commands}</param>
         <param name="state_following_offset">0.0</param>
-     </xacro:if>
+     </xacro:if>)
      <!--unless no simulation is required, use real hardware-->
      <xacro:unless value="${use_fake_hardware}">
          <plugin>esp32_robot_driver/ESP32Hardware</plugin>    <!--call our plugin for interfacing with the esp (this is the Driver!)-->
@@ -162,7 +162,10 @@ Now we can access the plugin named ````esp32_robot_driver/ESP32Hardware```` in t
 
 ## Launch
 
-We have implemented three launch files for three different purposses: 
+In contrast to the description packages the launch of the recommendet nodes will not automatically be done while buildung the container, because we have implemented three launch files for three different purposses.
+
+To make these files executable please move to the diy_robotarm_wer24_driver workspace with: ````cd /home/$USER/dependencies/diy_robotarm_wer24_driver_ws/
+````and source it with ````source install/setup.bash````. Hint: You have to do this in every new terminal you start and connect to your docker container! Connection of a new terminal with the running container can be done with ````docker ecex -it <name> bash```` , in our case name = ````robot_arm_driver```` for this development stage.
 
 - ````viszualize.launch.py````: This is only for visualization and checking purposes of the description packages in the dependencies-directory, because we don't do a real bringup of the robot model. Joint States are just published by the GUI on the specific ROS-topic, we don't launch our drivers!
 - ````forward_controller.launch.py````: This is only for testing purposes of our hardware interface. This launch file will launch the **forward_position_controller** only. By passing the launch argument ````use_fake_hardware:=false````in launch, the driver trys to connect to the real robot hardware. Now we have done a real bringup of the robot and you should be able to control the robot by publishing position commands on this topic: ````ros2 topic pub /forward_position_controller/commands std_msgs/msg/Float64MultiArray "{data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}"````. In the data array you can pass any float value between +/- pi, this equals the absolute target joint position in radiants.
