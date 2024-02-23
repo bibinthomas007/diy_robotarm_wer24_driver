@@ -143,5 +143,5 @@ USER $USER
 
 #default command which starts all controllers with fake hardware and displays the robot_description in rviz
 # --> make sure to overwrite this CMD in the moveit package to abvoid launching multiple versions of rviz and controllers!
-CMD ["ros2", "launch", "diy_robotarm_wer24_driver", "forward_controller.launch.py", "rviz:=true"]
+#CMD ["ros2", "launch", "diy_robotarm_wer24_driver", "forward_controller.launch.py", "rviz:=true"]
 
