@@ -107,7 +107,7 @@ We used a command interface named ````position```` and a state interface also na
 Moreover the joint_trajecotry controller is set up with some additional parameters which influence the controller behavoirs.
 
 - The controller works as an action-server ````joint_trajectory_controller/follow_joint_trajectory````, which can called by an action-client (simplyfied you can say the client is moveit). ````state_publish_rate```` and ````action_motitor_rate````define frequencies the controller publishes commands and monitors states on the topics the server is connedted to. We will come back to this later in the moveit repo: https://github.com/RobinWolf/diy_robot_wer24_moveit
-- Setting ````open_loop_control = true```` is done because our harware can't provide a real joint state monitoring. When this flag is set true the controller uses the command setpoint of the last control loop iteration as the state of the current control loop iteration.
+- Setting ````open_loop_control = false```` is done because our harware provides a state interface/ monitoring. But be aware of using this because the robot state of our diy hardware belongs on counted steps and not angle measurement. If the steppers loose steps, we will not recognize that !
 - The other paramerters define some conatraints for trajectory calculation and execution.
 
 **Note:** <br>

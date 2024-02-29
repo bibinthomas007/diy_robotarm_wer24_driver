@@ -60,8 +60,8 @@ joint_trajectory_controller:
     state_publish_rate: 100.0
     action_monitor_rate: 20.0 # in Hz, monitor changes on: control_msgs::action::FollowJointTrajectory -> interface between hardware interface and moveit (FollowJointTrajectory action node)
     allow_partial_joints_goal: false
-    #by setting open_loop to true the state interfaces will be ignored and the last message on joint_trajectory command topic choosen as current hardware state instead
-    #open_loop_control: true #because reading from command interface on starting, command interface must be set to NaN or state number before starting the controller (done with initial position in hardware description)
+    open_loop_control: false
+    #by setting open_loop to true the state interfaces will be ignored and the last message on joint_trajectory command topic choosen as current hardware state instead, we provide feedback over the state interface!
     allow_integration_in_goal_trajectories: true
 
     constraints:
