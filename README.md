@@ -14,7 +14,7 @@ The main idea is, that this repo can be cloned inside a docker-container contain
 
 This driver package needs the whole description package (diy_robot_full_cell_description) already running in an container, so we need **Part 1, description** as a dependencie package already build and sourced inside this container (````/home/$USER/dependencies/...````)
 
-Refer to the main Readme.md https://github.com/mathias31415/diy_robotics/blob/main/ROS-Packages/ROS-OVERVIEW.md for a general overview.
+Refer to the main Readme.md https://github.com/mathias31415/diy_robotics/blob/main/ROS-Packages/README.md for a general overview.
 
 
 ## Package Structure
