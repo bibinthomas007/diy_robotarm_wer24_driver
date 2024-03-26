@@ -56,8 +56,8 @@ controller_manager:
 ````
 - the update_rate defines the frequency (Hz) of the realtime control loop reading and writing messages to or from the robot.
 - the joint_state_broadcaster takes take the joint state information provided by the joint state publisher and broadcasting it on /joint_states topic
-- the forward_position_controller passes command signal to every joint (controls all joints dependent to each of them) --> used by moveit
-- the joint_trajectory_controller passes command signal from the command topic down to single joints. Command signal and joint hardware interface are of the same type (position/ angle)
+- the joint_trajectory_controller passes trajectory command signal to every joint (controls all joints dependent to each of them) --> used by moveit
+- the forward_position_controller passes single c-space command signal from the command topic down to single joints. Command signal and joint hardware interface are of the same type (position/ angle)
 
 ### Definition of the joint_trajectory_controller:
 
