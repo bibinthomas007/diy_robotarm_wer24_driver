@@ -38,6 +38,15 @@ The following graphics gives you a short overview about the ROS2-control archite
 
 The hardware innterface plugin is called in the dependencie package "diy_robotarm_wer24_description" ````./urdf/diy_robotarm.ros2_control.urdf.xacro```` with ```` <plugin>esp32_robot_driver/ESP32Hardware</plugin>````. For more informations about generating a ROS2 control tag for real hatdware or for fake hardware please refer to this repo (we mentioned this bit weired ros2 architecture there as well): https://github.com/RobinWolf/diy_robotarm_wer24_description
 
+### ROS-Workflow for executing Trajectories:
+1) Trajectory Generation: The Joint Trajectory Action Server receives trajectory goals from higher-level components such as motion planners or trajectory generators. It then plans trajectories that satisfy these goals, considering factors such as joint limits, velocity constraints, and collision avoidance.
+
+2) Trajectory Execution: Once the Joint Trajectory Action Server generates the trajectories, it sends them to the Trajectory Controller for execution. The Trajectory Controller receives these trajectories and computes the control signals necessary to track them accurately.
+
+3) Feedback Control: As the trajectories are being executed, the Trajectory Controller continuously monitors the feedback from sensors to ensure that the actual joint positions, velocities, and accelerations closely match the desired trajectories. It makes real-time adjustments to the control signals to correct any discrepancies and maintain the desired trajectory tracking performance.
+
+4) Completion and Feedback: Throughout the execution process, the Joint Trajectory Action Server provides feedback to the client indicating the progress of trajectory execution. Once the trajectories are successfully completed or aborted (due to errors or external interruptions), appropriate feedback is sent back to the client.
+
 ## Definition of the Controller Manager and the Controller Interfaces
 
 The controller manager and the controller interfaces itself are defined in ````./config/esp32_controller.yaml````. 
@@ -104,9 +113,9 @@ joint_trajectory_controller:
 
 We used a command interface named ````position```` and a state interface also named ````position````. Because we are passing a default parameter ````${tf_prefix}```` for namespace reasons to the joint interface name definition. ````arm_```` in our case (for full parameter description in the urdf files please refer to this readme: https://github.com/RobinWolf/diy_robot_full_cell_description/blob/main/README.md)
 
-Moreover the joint_trajecotry controller is set up with some additional parameters which influence the controller behavoirs.
+Moreover the joint_trajecotry controller is set up with some additional parameters which influence the controller and trajectory execution behavoirs.
 
-- The controller works as an action-server ````joint_trajectory_controller/follow_joint_trajectory````, which can called by an action-client (simplyfied you can say the client is moveit). ````state_publish_rate```` and ````action_motitor_rate````define frequencies the controller publishes commands and monitors states on the topics the server is connedted to. We will come back to this later in the moveit repo: https://github.com/RobinWolf/diy_robot_wer24_moveit
+- The controller gets its trajectories to execute from an action server named ````joint_trajectory_controller/follow_joint_trajectory````, which can called by an action-client (simplyfied you can say the client is moveit or an other path-planning module). ````state_publish_rate```` and ````action_motitor_rate````define frequencies the server publishes commands and monitors states on the topics the server is connedted to (in which frequencies the action server talks to the controller). We will come back to this later in the moveit repo: https://github.com/RobinWolf/diy_robot_wer24_moveit
 - Setting ````open_loop_control = false```` is done because our harware provides a state interface/ monitoring. But be aware of using this because the robot state of our diy hardware belongs on counted steps and not angle measurement. If the steppers loose steps, we will not recognize that !
 - The other paramerters define some conatraints for trajectory calculation and execution.
 
